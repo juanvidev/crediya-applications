@@ -13,12 +13,12 @@ spring:
     include: null
 adapters:
   r2dbc:
-    host: "localhost"
-    port: 5434
-    database: "postgres"
+    host: "${DB_HOST:localhost}"     # por defecto localhost si no existe
+    port: "${DB_PORT:5432}"          # valor por defecto 5432
+    database: "${DB_NAME:applicationsdb}"
     schema: "public"
-    username: "postgres"
-    password: "postgrespw"
+    username: "${DB_USER:applicationsuser}"
+    password: "${DB_PASS:applicationspass}"
 management:
   endpoints:
     web:
@@ -44,7 +44,7 @@ jwt:
 adapter:
   restconsumer:
     timeout: 150000
-    url: "http://localhost:8081/api/v1"
+    url: "${AUTH_SERVICE_URL:http://localhost:8081/api/v1}"
 resilience4j:
   circuitbreaker:
     instances:
