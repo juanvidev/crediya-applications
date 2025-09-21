@@ -54,6 +54,7 @@ class LoanApplicationReactiveRepositoryAdapterTest {
                 domain.getAmount(),
                 domain.getTerm(),
                 domain.getEmail(),
+                domain.getDocumentId(),
                 domain.getStateId(),
                 domain.getTypeLoanId()
         );

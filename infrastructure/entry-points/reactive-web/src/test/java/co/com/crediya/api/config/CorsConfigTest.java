@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -27,7 +29,15 @@ class CorsConfigTest {
 
     @Configuration
     static class SecurityOverride {
-
+        @Bean
+        public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+            return http
+                    .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                    .authorizeExchange(auth -> auth
+                            .pathMatchers(
+                                    "/test"
+                            ).permitAll()).build();
+        }
     }
 
     @Test
@@ -57,6 +67,7 @@ class CorsConfigTest {
     void testPostShouldReturnNoContent() {
         webTestClient.post()
                 .uri("/test")
+
                 .exchange()
                 .expectStatus().isNoContent()
                 .expectHeader().valueEquals("Content-Security-Policy",

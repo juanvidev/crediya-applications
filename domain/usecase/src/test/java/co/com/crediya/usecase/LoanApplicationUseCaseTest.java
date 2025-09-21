@@ -1,5 +1,6 @@
 package co.com.crediya.usecase;
 
+import co.com.crediya.model.clientrest.ClientRest;
 import co.com.crediya.model.clientrest.gateways.ClientRepository;
 import co.com.crediya.model.clientrest.gateways.TokenGateway;
 import co.com.crediya.model.exception.BusinessException;
@@ -58,6 +59,7 @@ class LoanApplicationUseCaseTest {
                 .amount(new BigDecimal("2500.22"))
                 .term(25)
                 .email("test@test.com")
+                .documentId("1234567891")
                 .typeLoanId(1)
                 .build();
 
@@ -83,6 +85,8 @@ class LoanApplicationUseCaseTest {
         when(loanTypeRepositoryMock.findByName("Basic")).thenReturn(Mono.just(loanType));
         when(statusRepositoryMock.findByName("PENDING")).thenReturn(Mono.just(status));
         when(loanApplicationRepository.save(any(LoanApplication.class))).thenReturn(Mono.just(loanApplyToTest));
+        when(tokenGateway.getClaim("documentId")).thenReturn(Mono.just("1234567891"));
+        when(clientRepository.existsByEmailAndDocument(loanApplyToTest.getEmail(), loanApplyToTest.getDocumentId())).thenReturn(Mono.just(new ClientRest()));
 
         StepVerifier.create(loanApplicationUseCaseMock.save(loanApplyToTest, loanTypeName))
                 .expectNextMatches(loanApply ->
@@ -97,8 +101,9 @@ class LoanApplicationUseCaseTest {
     @DisplayName("Should throw StatusNotFoundException when status not found")
     void testStatusNotFound() {
         when(loanTypeRepositoryMock.findByName("Basic")).thenReturn(Mono.just(new LoanType()));
+        when(tokenGateway.getClaim("documentId")).thenReturn(Mono.just("1234567891"));
+        when(clientRepository.existsByEmailAndDocument(loanApplyToTest.getEmail(), loanApplyToTest.getDocumentId())).thenReturn(Mono.just(new ClientRest()));
         when(statusRepositoryMock.findByName("PENDING")).thenReturn(Mono.error(new BusinessException("BSS_02", "Status not found")));
-
         StepVerifier.create(loanApplicationUseCaseMock.save(loanApplyToTest, loanTypeName))
                 .expectError(BusinessException.class)
                 .verify();
@@ -107,6 +112,8 @@ class LoanApplicationUseCaseTest {
     @Test
     @DisplayName("Should throw LoanTypeNotFoundException when loan type does not exist")
     void testLoanTypeNotFound() {
+        when(tokenGateway.getClaim("documentId")).thenReturn(Mono.just("1234567891"));
+        when(clientRepository.existsByEmailAndDocument(loanApplyToTest.getEmail(), loanApplyToTest.getDocumentId())).thenReturn(Mono.just(new ClientRest()));
         when(loanTypeRepositoryMock.findByName("InvalidType")).thenReturn(Mono.error(new BusinessException("BSS_01", "Loan type not found")));
         when(statusRepositoryMock.findByName("PENDING")).thenReturn(Mono.just(status));
 
