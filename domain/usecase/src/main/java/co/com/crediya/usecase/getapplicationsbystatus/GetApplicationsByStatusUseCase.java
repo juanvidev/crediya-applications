@@ -48,12 +48,12 @@ public class GetApplicationsByStatusUseCase {
                             List<Integer> statusIds = loans.stream()
                                     .map(LoanApplication::getStateId)
                                     .distinct()
-                                    .collect(Collectors.toList());
+                                    .toList();
 
                             List<Integer> loanTypeIds = loans.stream()
                                     .map(LoanApplication::getTypeLoanId)
                                     .distinct()
-                                    .collect(Collectors.toList());
+                                    .toList();
 
                             Mono<Map<String, ClientRest>> clientsMapMono = clientRepository.findAllByEmail(clientEmails)
                                     .collectMap(ClientRest::getEmail);

@@ -15,10 +15,10 @@ adapters:
   r2dbc:
     host: "localhost"
     port: 5434
-    database: "postgres"
+    database: "applicationsdb"
     schema: "public"
-    username: "postgres"
-    password: "postgrespw"
+    username: "applicationsuser"
+    password: "applicationspass"
 management:
   endpoints:
     web:
@@ -39,12 +39,16 @@ springdoc:
   swagger-ui:
     path: "/swagger-doc"
 jwt:
-    json-exp-roles: "/roles"
-    secret: "${JWT_SECRET}"
+  json-exp-roles: "/roles"
+  secret: "${JWT_SECRET}"
 adapter:
   restconsumer:
     timeout: 150000
     url: "http://localhost:8081/api/v1"
+  sqs:
+    region: "us-east-1"
+    queueUrl: "https://sqs.us-east-1.amazonaws.com/638845179891/QueueNotificationEmail"
+#    endpoint: "http://localhost:4566"
 resilience4j:
   circuitbreaker:
     instances:

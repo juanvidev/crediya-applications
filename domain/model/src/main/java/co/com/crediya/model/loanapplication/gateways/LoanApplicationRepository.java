@@ -9,4 +9,5 @@ import java.util.List;
 public interface LoanApplicationRepository {
     Mono<LoanApplication> save(LoanApplication loanApplication);
     Flux<LoanApplication> findAllApplicationsByStatus(int statusId, int page, int size);
+    Mono<LoanApplication> findById(Integer id);
 }

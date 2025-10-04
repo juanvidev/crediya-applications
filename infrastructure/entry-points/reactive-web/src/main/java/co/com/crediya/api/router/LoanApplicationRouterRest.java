@@ -13,8 +13,6 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import static org.springframework.web.reactive.function.server.RouterFunctions.route;
-
 @Configuration
 @Tag(name = "LoanApplications", description = "Loan Applications Management")
 public class LoanApplicationRouterRest {
@@ -31,7 +29,9 @@ public class LoanApplicationRouterRest {
     public RouterFunction<ServerResponse> routerFunction(LoanApplicationHandler loanApplicationHandler) {
         return RouterFunctions
                 .route()
-                .path(Routes.LOAN_APPLICATION,builder -> builder
-                    .POST("", loanApplicationHandler::saveApplication))
+                .path(Routes.BASE_PATH,builder -> builder
+                    .POST("/apply", loanApplicationHandler::saveApplication)
+                    .POST("/apply/{id}", loanApplicationHandler::listenUpdateStatusLoanApplication)
+                )
                 .build();
     }}
